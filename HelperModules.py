@@ -8,6 +8,7 @@ def getTimeSlice(temperatureSeries,time_yr) :
 
 
 def Unstack(timeSlice) :
+    # (For use with the temperatureSeries)
     # Unstack a time slice (turn into pandas dataframe)
     # Rows are latitude, columns are longitude
 
@@ -27,7 +28,8 @@ def Unstack(timeSlice) :
     return unstacked
 
 
-def plotMap(timeSlice,fig,ax,vmin=None,vmax=None) :
+def plotMap(timeSlice,fig,ax,vmin=None,vmax=None,add_colorbar=True) :
+    # (For use with the temperatureSeries)
     # Plot the map, given a timeSlice.
     # Takes the output of getTimeSlice
     # (e.g. a series consisting of lat and lon multiindex values)
@@ -56,11 +58,13 @@ def plotMap(timeSlice,fig,ax,vmin=None,vmax=None) :
     the_contour.set_clim(vmin,vmax)
     ax.set_global()
     ax.coastlines()
-    fig.colorbar(the_contour,ax=[ax])
+    if add_colorbar :
+        fig.colorbar(the_contour,ax=[ax])
     return the_contour
 
 
 def plotTimeSlice(temperatureSeries,time_yr,fig,ax,vmin=None,vmax=None) :
+    # (For use with the temperatureSeries)
     # Same as plotMap, but you simply have to give the year (integer)
 
     # get the slice
