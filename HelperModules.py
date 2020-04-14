@@ -28,7 +28,7 @@ def Unstack(timeSlice) :
     return unstacked
 
 
-def plotMap(timeSlice,fig,ax,vmin=None,vmax=None,add_colorbar=True) :
+def plotMap(timeSlice,fig,ax,vmin=None,vmax=None,add_colorbar=True,z_label='Temperature [$^{\circ}$C]') :
     # (For use with the temperatureSeries)
     # Plot the map, given a timeSlice.
     # Takes the output of getTimeSlice
@@ -59,7 +59,8 @@ def plotMap(timeSlice,fig,ax,vmin=None,vmax=None,add_colorbar=True) :
     ax.set_global()
     ax.coastlines()
     if add_colorbar :
-        fig.colorbar(the_contour,ax=[ax])
+        cbar = fig.colorbar(the_contour,ax=[ax])
+        cbar.set_label(z_label)
     return the_contour
 
 
@@ -88,20 +89,20 @@ def getLatSlice(temperatureSeries,lower,upper) :
     return temperatureSeries.loc[temperatureSeries.index.isin(list(allowed), level='lat')]
 
 
-def getSolarForcingData(filename) :
+def getForcingData(filename,data_type) :
     # Returns a pandas dataframe for the solar forcing data
 
     import xarray as xr
     import numpy as np
 
     ds = xr.open_dataset(filename)
-    TSI = ds.to_dataframe()['TSI']
+    DF = ds.to_dataframe()[data_type] # data_type is AOD or DF
 
     # "lev" and "x" seem to be meaningless, so let's get rid of them and turn the series into a dataframe.
-    TSI = TSI.xs((1.0)).xs(0,level='x').to_frame()
-    TSI = TSI.reset_index()
+    DF = DF.xs((1.0)).xs(0,level='x').to_frame()
+    DF = DF.reset_index()
 
     # Make a "time_yr" column
-    TSI['time_yr'] = np.round(TSI['time']/10000)
+    DF['time_yr'] = np.round(DF['time']/10000)
 
-    return TSI
+    return DF
